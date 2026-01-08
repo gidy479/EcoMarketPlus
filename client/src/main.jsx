@@ -4,7 +4,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import './index.css'
 import App from './App.jsx'
 
-const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim();
 
 if (!clientId) {
   console.error("CRITICAL: Google Client ID is missing. Please check VITE_GOOGLE_CLIENT_ID in Vercel settings.");
