@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
-
-const api = axios.create({
-    baseURL: 'http://localhost:5000/api',
-});
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login } = useAuth();
+    const { login, googleLogin } = useAuth();
     const navigate = useNavigate();
     const [error, setError] = useState('');
 
@@ -25,7 +20,15 @@ const LoginPage = () => {
         }
     };
 
-
+    const handleGoogleSuccess = async (credentialResponse) => {
+        try {
+            await googleLogin(credentialResponse.credential);
+            navigate('/dashboard');
+        } catch (err) {
+            console.error('Google Server Login Error:', err);
+            setError(err.response?.data?.message || 'Google Login Failed on Server');
+        }
+    };
 
     return (
         <div className="pt-24 min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-teal-50 px-4">
@@ -75,18 +78,7 @@ const LoginPage = () => {
 
                     <div className="flex justify-center w-full">
                         <GoogleLogin
-                            onSuccess={async (credentialResponse) => {
-                                try {
-                                    const { data } = await api.post('/auth/google', {
-                                        credential: credentialResponse.credential,
-                                    });
-                                    localStorage.setItem('token', data.token);
-                                    window.location.href = '/dashboard';
-                                } catch (err) {
-                                    console.error('Google Server Login Error:', err);
-                                    setError('Google Login Failed on Server');
-                                }
-                            }}
+                            onSuccess={handleGoogleSuccess}
                             onError={() => {
                                 console.error('Google Login Failed');
                                 setError('Google Login Failed');

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 const AuthContext = createContext();
 
@@ -8,51 +8,61 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
 
-    // Configure axios defaults
-    if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    }
-
+    // Load user on mount or when token changes
     useEffect(() => {
         const loadUser = async () => {
-            if (token) {
-                try {
-                    const { data } = await axios.get('http://localhost:5000/api/auth/profile');
-                    setUser(data);
-                } catch (error) {
-                    console.error("Auth Load Error:", error);
-                    logout();
-                }
+            if (!token) {
+                setLoading(false);
+                return;
             }
-            setLoading(false);
+
+            try {
+                // api interceptor will attach token automatically
+                const { data } = await api.get('/auth/profile');
+                setUser(data);
+            } catch (error) {
+                console.error("Auth Load Error:", error);
+                logout();
+            } finally {
+                setLoading(false);
+            }
         };
+
         loadUser();
     }, [token]);
 
     const login = async (email, password) => {
-        const { data } = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+        const { data } = await api.post('/auth/login', { email, password });
         localStorage.setItem('token', data.token);
         setToken(data.token);
         setUser(data);
-        return data; // Return data for redirect logic
+        return data;
     };
 
     const register = async (name, email, password, role) => {
-        const { data } = await axios.post('http://localhost:5000/api/auth/register', { name, email, password, role });
+        const { data } = await api.post('/auth/register', { name, email, password, role });
         localStorage.setItem('token', data.token);
         setToken(data.token);
         setUser(data);
+        return data; // Return data so page can redirect
+    };
+
+    const googleLogin = async (credential) => {
+        const { data } = await api.post('/auth/google', { credential });
+        localStorage.setItem('token', data.token);
+        setToken(data.token);
+        setUser(data);
+        return data;
     };
 
     const logout = () => {
         localStorage.removeItem('token');
         setToken(null);
         setUser(null);
-        delete axios.defaults.headers.common['Authorization'];
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, login, register, logout, loading }}>
+        <AuthContext.Provider value={{ user, token, login, register, googleLogin, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );

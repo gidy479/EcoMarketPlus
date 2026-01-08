@@ -97,21 +97,28 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const googleLogin = async (req, res) => {
     const { credential } = req.body; // Receive JWT credential from frontend
 
+    console.log('[AUTH LOG] Google Login attempt initiated');
+
+    if (!process.env.GOOGLE_CLIENT_ID) {
+        console.error('[AUTH LOG] CRITICAL ERROR: GOOGLE_CLIENT_ID is not defined in server environment');
+        return res.status(500).json({ message: 'Server configuration error: Missing Google Client ID' });
+    }
+
     try {
-
-
-
+        console.log('[AUTH LOG] Verifying Google Token...');
         const ticket = await googleClient.verifyIdToken({
             idToken: credential,
             audience: process.env.GOOGLE_CLIENT_ID,
         });
         const payload = ticket.getPayload();
+        console.log(`[AUTH LOG] Google Token Verified. Email: ${payload.email}`);
 
         const { email, name, picture, sub: googleId } = payload;
 
         let user = await User.findOne({ email });
 
         if (user) {
+            console.log(`[AUTH LOG] User found: ${email}. Updating Google info.`);
             // Update googleId and avatar if missing or changed
             user.googleId = googleId;
             user.avatar = picture;
@@ -125,6 +132,7 @@ const googleLogin = async (req, res) => {
                 token: generateToken(user.id),
             });
         } else {
+            console.log(`[AUTH LOG] User NOT found: ${email}. Creating new user.`);
             // Create new user
             const randomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
 
@@ -146,7 +154,7 @@ const googleLogin = async (req, res) => {
             });
         }
     } catch (error) {
-        console.error("Google Auth Error:", error);
+        console.error("[AUTH LOG] Google Auth Error:", error);
         res.status(401).json({ message: 'Google Authentication Failed', error: error.message });
     }
 };
