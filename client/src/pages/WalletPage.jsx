@@ -53,12 +53,13 @@ const WalletPage = () => {
         email: user?.email,
         amount: amount * 100,
         currency: 'GHS',
+        channels: ['mobile_money'], // Explicitly restrict to Mobile Money (MTN, Vodafone, etc.)
         metadata: {
             name: user?.name,
             phone: "0000000000",
         },
         publicKey: paystackKey,
-        text: "Deposit Funds",
+        text: "Pay with MTN Mobile Money",
         onSuccess: (reference) => handlePaystackSuccessAction(reference),
         onClose: () => alert("Transaction canceled"),
     };
