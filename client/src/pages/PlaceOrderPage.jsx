@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { PaystackButton } from 'react-paystack';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 const PlaceOrderPage = () => {
     const navigate = useNavigate();
@@ -72,7 +73,7 @@ const PlaceOrderPage = () => {
             };
 
             // Create Order in Backend
-            const { data } = await axios.post('http://localhost:5000/api/orders', orderData, config);
+            const { data } = await axios.post(`${API_URL}/api/orders`, orderData, config);
 
             // Clear Cart and Redirect
             clearCart();

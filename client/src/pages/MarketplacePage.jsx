@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ProductCard from '../components/ProductCard';
+import { API_URL } from '../config';
 
 const MarketplacePage = () => {
     const [products, setProducts] = useState([]);
@@ -13,7 +14,7 @@ const MarketplacePage = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const { data } = await axios.get(`http://localhost:5000/api/products?pageNumber=${page}`);
+                const { data } = await axios.get(`${API_URL}/api/products?pageNumber=${page}`);
                 setProducts(data.products || data);
                 setTotalPages(data.pages || 1);
                 setLoading(false);

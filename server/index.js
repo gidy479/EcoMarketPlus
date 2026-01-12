@@ -61,7 +61,10 @@ app.use('/api/orders', require('./routes/orderRoutes'));
 
 const PORT = process.env.PORT || 5000;
 
-if (process.env.NODE_ENV !== 'production') {
+// Start server
+// For Vercel, we export the app. For other environments (local/Render), we listen.
+// We can check if we are in a serverless function context or just rely on the script execution.
+if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
     });

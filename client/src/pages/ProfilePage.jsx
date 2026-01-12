@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 const ProfilePage = () => {
     const { user } = useAuth();
@@ -24,7 +25,7 @@ const ProfilePage = () => {
                 },
             };
 
-            await axios.put('http://localhost:5000/api/auth/profile', {
+            await axios.put(`${API_URL}/api/auth/profile`, {
                 name,
                 avatar: avatarUrl
             }, config);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 import { PaystackButton } from 'react-paystack';
 
 const WalletPage = () => {
@@ -13,10 +14,10 @@ const WalletPage = () => {
 
     const fetchWallet = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/wallet');
+            const { data } = await axios.get(`${API_URL}/api/wallet`);
             setWallet(data);
 
-            const txnRes = await axios.get('http://localhost:5000/api/wallet/history');
+            const txnRes = await axios.get(`${API_URL}/api/wallet/history`);
             setTransactions(txnRes.data);
 
             setLoading(false);
@@ -32,7 +33,7 @@ const WalletPage = () => {
 
     const handlePaystackSuccessAction = async (reference) => {
         try {
-            await axios.post('http://localhost:5000/api/wallet/fund', {
+            await axios.post(`${API_URL}/api/wallet/fund`, {
                 amount,
                 reference: reference.reference,
                 description: "Wallet Funding via Paystack"

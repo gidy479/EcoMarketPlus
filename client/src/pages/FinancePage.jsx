@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 
 const FinancePage = () => {
     const { token } = useAuth();
@@ -23,9 +24,9 @@ const FinancePage = () => {
         try {
             setLoading(true);
             const [summaryRes, insightsRes, budgetsRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/finance/summary'),
-                axios.get('http://localhost:5000/api/finance/insights'),
-                axios.get('http://localhost:5000/api/finance/budgets')
+                axios.get(`${API_URL}/api/finance/summary`),
+                axios.get(`${API_URL}/api/finance/insights`),
+                axios.get(`${API_URL}/api/finance/budgets`)
             ]);
 
             setSummary(summaryRes.data);
@@ -45,7 +46,7 @@ const FinancePage = () => {
     const handleCreateBudget = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/finance/budgets', {
+            await axios.post(`${API_URL}/api/finance/budgets`, {
                 category: budgetForm.category,
                 limit: Number(budgetForm.limit)
             });
@@ -60,7 +61,7 @@ const FinancePage = () => {
     const handleAddTransaction = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/finance/transaction', {
+            await axios.post(`${API_URL}/api/finance/transaction`, {
                 ...transactionForm,
                 amount: Number(transactionForm.amount),
                 type: transactionType

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 const DashboardPage = () => {
     const { user } = useAuth();
@@ -16,7 +17,7 @@ const DashboardPage = () => {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
                 };
-                const { data } = await axios.get('http://localhost:5000/api/orders/myorders', config);
+                const { data } = await axios.get(`${API_URL}/api/orders/myorders`, config);
                 setOrders(data);
                 setLoading(false);
             } catch (error) {

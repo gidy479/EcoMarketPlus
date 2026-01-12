@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 const AddProductPage = () => {
     const navigate = useNavigate();
@@ -42,7 +43,7 @@ const AddProductPage = () => {
                 }
             };
 
-            await axios.post('http://localhost:5000/api/products', productData, config);
+            await axios.post(`${API_URL}/api/products`, productData, config);
             setLoading(false);
             navigate('/dashboard');
         } catch (err) {
