@@ -34,7 +34,7 @@ const Header = () => {
                                     Logout
                                 </button>
                                 <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold border border-green-200">
-                                    {user.name.charAt(0).toUpperCase()}
+                                    {user?.name?.charAt(0).toUpperCase() || '?'}
                                 </div>
                             </>
                         ) : (

@@ -53,7 +53,7 @@ const ProfilePage = () => {
                                 {user.avatar ? (
                                     <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
                                 ) : (
-                                    user.name.charAt(0).toUpperCase()
+                                    user?.name?.charAt(0).toUpperCase() || '?'
                                 )}
                             </div>
 
