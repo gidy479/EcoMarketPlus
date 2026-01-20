@@ -45,19 +45,22 @@ const MarketplacePage = () => {
                 </div>
 
                 {/* Search and Filters */}
+                {/* Search and Filters */}
                 <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
                     <form onSubmit={submitHandler} className="flex-1 w-full flex gap-2">
                         <input
                             type="text"
                             name="q"
+                            value={keyword}
                             onChange={(e) => setKeyword(e.target.value)}
                             placeholder="Search sustainable products..."
                             className="flex-1 w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all"
                         />
-                        <button type="submit" className="bg-gray-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-800 transition-colors">
+                        <button type="submit" className="bg-check-green text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition-colors" style={{ backgroundColor: '#22c55e' }}>
                             Search
                         </button>
                     </form>
+
 
                     <div className="flex gap-2">
                         <div className="px-4 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-bold flex items-center gap-2">
