@@ -137,9 +137,22 @@ const importExternalProducts = async (req, res) => {
     }
 };
 
+// @desc    Get logged in user's products
+// @route   GET /api/products/myproducts
+// @access  Private/Seller
+const getMyProducts = async (req, res) => {
+    try {
+        const products = await Product.find({ user: req.user._id });
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getProducts,
     getProductById,
     createProduct,
-    importExternalProducts
+    importExternalProducts,
+    getMyProducts
 };
