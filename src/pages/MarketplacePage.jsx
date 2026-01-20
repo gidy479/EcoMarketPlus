@@ -9,23 +9,30 @@ const MarketplacePage = () => {
     const [error, setError] = useState('');
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [keyword, setKeyword] = useState('');
+
+    const fetchProducts = async (currPage, currKeyword = '') => {
+        setLoading(true);
+        try {
+            const { data } = await axios.get(`${API_URL}/api/products?keyword=${currKeyword}&pageNumber=${currPage}`);
+            setProducts(data.products || data);
+            setTotalPages(data.pages || 1);
+            setLoading(false);
+        } catch (err) {
+            setError('Failed to load products');
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            setLoading(true);
-            try {
-                const { data } = await axios.get(`${API_URL}/api/products?pageNumber=${page}`);
-                setProducts(data.products || data);
-                setTotalPages(data.pages || 1);
-                setLoading(false);
-            } catch (err) {
-                setError('Failed to load products');
-                setLoading(false);
-            }
-        };
+        fetchProducts(page, keyword);
+    }, [page]); // Only re-run on page change, search is triggered manually or we can add keyword if we want real-time
 
-        fetchProducts();
-    }, [page]);
+    const submitHandler = (e) => {
+        e.preventDefault();
+        setPage(1); // Reset to page 1 on new search
+        fetchProducts(1, keyword);
+    };
 
     return (
         <div className="pt-24 min-h-screen bg-gray-50 pb-20">
@@ -35,10 +42,30 @@ const MarketplacePage = () => {
                         <h1 className="text-4xl font-bold text-gray-900 mb-2">Eco-Marketplace</h1>
                         <p className="text-gray-600">Discover products that are good for you and the planet.</p>
                     </div>
-                    {/* Mock Filter Buttons */}
-                    <div className="flex gap-2 mt-4 md:mt-0">
-                        <button className="px-4 py-2 bg-white border rounded-lg text-sm font-medium hover:bg-gray-50">Filter</button>
-                        <button className="px-4 py-2 bg-white border rounded-lg text-sm font-medium hover:bg-gray-50">Sort by: Eco-Score</button>
+
+                    <div className="flex flex-col md:flex-row gap-4 mt-4 md:mt-0 items-center">
+                        {/* Search Bar */}
+                        <form onSubmit={submitHandler} className="flex">
+                            <input
+                                type="text"
+                                name="q"
+                                onChange={(e) => setKeyword(e.target.value)}
+                                placeholder="Search products..."
+                                className="px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                            />
+                            <button
+                                type="submit"
+                                className="px-4 py-2 bg-green-600 text-white rounded-r-lg hover:bg-green-700 transition-colors"
+                            >
+                                Search
+                            </button>
+                        </form>
+
+                        {/* Filters */}
+                        <div className="flex gap-2">
+                            <button className="px-4 py-2 bg-white border rounded-lg text-sm font-medium hover:bg-gray-50">Filter</button>
+                            <button className="px-4 py-2 bg-white border rounded-lg text-sm font-medium hover:bg-gray-50">Sort by: Eco-Score</button>
+                        </div>
                     </div>
                 </div>
 

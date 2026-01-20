@@ -17,8 +17,9 @@ const getProducts = async (req, res) => {
                     $regex: req.query.keyword,
                     $options: 'i',
                 },
+                isVerified: true
             }
-            : {};
+            : { isVerified: true };
 
         const count = await Product.countDocuments({ ...keyword });
         const products = await Product.find({ ...keyword })

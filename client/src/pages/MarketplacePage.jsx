@@ -9,23 +9,30 @@ const MarketplacePage = () => {
     const [error, setError] = useState('');
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [keyword, setKeyword] = useState('');
+
+    const submitHandler = (e) => {
+        e.preventDefault();
+        setPage(1); // Reset to page 1 for new search
+        fetchProducts(keyword);
+    };
+
+    const fetchProducts = async (currKeyword = '') => {
+        setLoading(true);
+        try {
+            const { data } = await axios.get(`${API_URL}/api/products?pageNumber=${page}&keyword=${currKeyword}`);
+            setProducts(data.products || data);
+            setTotalPages(data.pages || 1);
+            setLoading(false);
+        } catch (err) {
+            setError('Failed to load products');
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            setLoading(true);
-            try {
-                const { data } = await axios.get(`${API_URL}/api/products?pageNumber=${page}`);
-                setProducts(data.products || data);
-                setTotalPages(data.pages || 1);
-                setLoading(false);
-            } catch (err) {
-                setError('Failed to load products');
-                setLoading(false);
-            }
-        };
-
-        fetchProducts();
-    }, [page]);
+        fetchProducts(keyword);
+    }, [page]); // Re-fetch on page change, but keep keyword
 
     return (
         <div className="pt-24 min-h-screen bg-gray-50 pb-20">
@@ -35,12 +42,31 @@ const MarketplacePage = () => {
                         <h1 className="text-4xl font-bold text-gray-900 mb-2">Eco-Marketplace</h1>
                         <p className="text-gray-600">Discover products that are good for you and the planet.</p>
                     </div>
-                    {/* Mock Filter Buttons */}
-                    <div className="flex gap-2 mt-4 md:mt-0">
-                        <button className="px-4 py-2 bg-white border rounded-lg text-sm font-medium hover:bg-gray-50">Filter</button>
-                        <button className="px-4 py-2 bg-white border rounded-lg text-sm font-medium hover:bg-gray-50">Sort by: Eco-Score</button>
+                </div>
+
+                {/* Search and Filters */}
+                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <form onSubmit={submitHandler} className="flex-1 w-full flex gap-2">
+                        <input
+                            type="text"
+                            name="q"
+                            onChange={(e) => setKeyword(e.target.value)}
+                            placeholder="Search sustainable products..."
+                            className="flex-1 w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all"
+                        />
+                        <button type="submit" className="bg-gray-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-800 transition-colors">
+                            Search
+                        </button>
+                    </form>
+
+                    <div className="flex gap-2">
+                        <div className="px-4 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-bold flex items-center gap-2">
+                            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                            Verified Only
+                        </div>
                     </div>
                 </div>
+
 
                 {loading ? (
                     <div className="text-center py-20">Loading...</div>

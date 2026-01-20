@@ -12,6 +12,20 @@ connectDB();
 const importData = async () => {
     try {
         await User.deleteMany();
+        try {
+            await User.collection.dropIndex('phoneNumber_1');
+            console.log('Orphaned index phoneNumber_1 dropped'.yellow);
+        } catch (error) { }
+
+        try {
+            await User.collection.dropIndex('accountNumber_1');
+            console.log('Orphaned index accountNumber_1 dropped'.yellow);
+        } catch (error) { }
+
+        try {
+            await User.collection.dropIndex('username_1');
+            console.log('Orphaned index username_1 dropped'.yellow);
+        } catch (error) { }
         await Product.deleteMany();
 
         const createdUsers = await User.insertMany([
